@@ -23,3 +23,5 @@ urlpatterns = [
     path("", include("core.urls")),
 
 ]
+
+#SALAM 
