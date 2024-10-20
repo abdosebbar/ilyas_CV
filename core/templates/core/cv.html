@@ -1,0 +1,70 @@
+{% load static %}
+<html class="scroll-smooth bg-white antialiased" lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin="anonymous" />
+    <link rel="stylesheet" href="{% static 'styles.css' %}" />
+    <title>Landing-Page</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+  </head>
+  <body>
+    <nav>
+      <div class="flex justify-between items-center py-4 px-5 lg:px-20">
+        <div class="text-lg font-bold text-blue-600">
+          <a href="{% static 'index.html' %}">HAMID.CV</a>
+        </div>
+        <div>
+          <a href="{% static 'cv.html' %}" class="bg-blue-600 text-white px-4 py-2 rounded-lg hover:bg-blue-500">
+            CV checker
+          </a>
+        </div>
+      </div>
+    </nav>
+
+    <div class="px-12 pt-16">
+      <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+        <div class="pl-12">
+          <form>
+            <div class="col-span-full">
+              <label for="about" class="block text-sm font-medium leading-6 text-gray-900">About</label>
+              <textarea id="about" name="about" rows="3"
+                class="block w-full rounded-md border border-transparent py-1.5 text-gray-900 shadow-sm ring-1 ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-indigo-600 focus:outline-none"></textarea>
+            </div>
+
+            <div class="col-span-full my-8">
+              <label for="cover-photo" class="block text-sm font-medium leading-6 text-gray-900">Your CV</label>
+              <div class="mt-2 flex justify-center rounded-lg border border-dashed border-gray-900/25 px-6 py-10">
+                <div class="text-center">
+                  <label for="file-upload" class="relative cursor-pointer bg-white font-semibold text-indigo-600 hover:text-indigo-500">
+                    <span>Upload a CV</span>
+                    <input id="file-upload" name="file-upload" type="file" class="sr-only" />
+                  </label>
+                  <p class="pl-1">or drag and drop</p>
+                  <p class="text-xs leading-5 text-gray-600">PDF</p>
+                </div>
+              </div>
+            </div>
+
+            <button type="submit"
+              class="bg-blue-500 text-white py-2 px-6 rounded-lg hover:bg-blue-600 focus:outline-none focus:ring-2 focus:ring-indigo-600">
+              Submit
+            </button>
+          </form>
+        </div>
+
+        <div class="flex items-center justify-center">
+          <img src="{% static 'images/resumes-desk.jpg' %}" alt="Placeholder Image"
+            class="rounded-lg shadow-lg h-[450px] w-[350px]" />
+        </div>
+      </div>
+    </div>
+
+    <footer class="relative pb-4 pt-5 sm:pb-12 sm:pt-14 border-t border-slate-300">
+      <div class="text-center text-sm text-slate-600">
+        <p>Copyright 2024 Lindehoff Design, LLC. All rights reserved.</p>
+      </div>
+    </footer>
+  </body>
+</html>
