@@ -3,7 +3,6 @@
 <head>
     <meta charset="UTF-8">
     <title>Traitement des CVs</title>
-     <!-- Lien vers une feuille de style CSS -->
     <style>
         body {
             font-family: Arial, sans-serif;
@@ -43,10 +42,11 @@
 <body>
     <div class="container">
         <h2>Déposez vos fichiers CV</h2>
+        <p>Vous pouvez soumettre des fichiers PDF, DOC, DOCX ou un fichier ZIP contenant plusieurs CVs.</p>
         <form method="post" enctype="multipart/form-data">
             {% csrf_token %}
             <label for="files">Sélectionnez vos fichiers :</label>
-            <input type="file" id="files" name="files" multiple required>
+            <input type="file" id="files" name="files" multiple required accept=".pdf,.doc,.docx,.zip">
             <button type="submit">Envoyer</button>
         </form>
 
@@ -55,50 +55,45 @@
         {% endif %}
 
         <h2>Résultats des CVs</h2>
-        
+
         <div class="results-section">
-            {% for image, competences in compétence.items %}
-                <h3>Résultats pour le CV : {{ image }}</h3>
+            {% for data in all_data %}
+                <h3>Résultats pour le CV : {{ data.image }}</h3>
+                
                 <h4>Compétences :</h4>
-                {% if competences %}
+                {% if data.compétence %}
                     <ul>
-                        {% for competence in competences %}
+                        {% for competence in data.compétence %}
                             <li>{{ competence }}</li>
                         {% endfor %}
                     </ul>
                 {% else %}
                     <p>Aucune compétence trouvée.</p>
                 {% endif %}
-            {% endfor %}
-        </div>
 
-        <div class="results-section">
-            {% for image, experiences in expérience.items %}
                 <h4>Expériences :</h4>
-                {% if experiences %}
+                {% if data.expérience %}
                     <ul>
-                        {% for experience in experiences %}
+                        {% for experience in data.expérience %}
                             <li>{{ experience }}</li>
                         {% endfor %}
                     </ul>
                 {% else %}
                     <p>Aucune expérience trouvée.</p>
                 {% endif %}
-            {% endfor %}
-        </div>
 
-        <div class="results-section">
-            {% for image, formations in formation.items %}
                 <h4>Formations :</h4>
-                {% if formations %}
+                {% if data.formation %}
                     <ul>
-                        {% for formation in formations %}
-                            <li>{{ formation }}</li>
+                        {% for formation_item in data.formation %}
+                            <li>{{ formation_item }}</li>
                         {% endfor %}
                     </ul>
                 {% else %}
                     <p>Aucune formation trouvée.</p>
                 {% endif %}
+
+                <hr> <!-- Ligne séparatrice pour chaque CV -->
             {% endfor %}
         </div>
     </div>

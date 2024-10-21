@@ -3,10 +3,11 @@ from .Resume.resume_processing import list_files, pdf_to_images, docx_to_images
 from .Resume.yolo_model import load_yolo_model, get_bounding_boxes
 from .Resume.text_processing import extract_text_from_image, process_texts
 import os
+import zipfile
 from collections import defaultdict
 
 # Chemin pour stocker les fichiers téléchargés et les images converties
-OUTPUT_FOLDER = os.path.join('static', 'images')
+OUTPUT_FOLDER = os.path.join('static_Resume', 'DOC_images')
 
 # Charger les modèles YOLO
 models = {
@@ -18,6 +19,40 @@ models = {
 def home_view(request):
     return render(request, 'core/index.html')
 
+def extract_zip(file_path, extract_to):
+    """Extraire un fichier ZIP vers un répertoire."""
+    with zipfile.ZipFile(file_path, 'r') as zip_ref:
+        zip_ref.extractall(extract_to)
+
+def process_uploaded_files(files):
+    """Traiter les fichiers envoyés, y compris les fichiers ZIP."""
+    os.makedirs(OUTPUT_FOLDER, exist_ok=True)
+    
+    for file in files:
+        file_path = os.path.join(OUTPUT_FOLDER, file.name)
+        with open(file_path, 'wb') as f:
+            for chunk in file.chunks():
+                f.write(chunk)
+
+        # Si le fichier est un ZIP, décompressez-le
+        if file.name.lower().endswith('.zip'):
+            extract_zip(file_path, OUTPUT_FOLDER)
+            os.remove(file_path)  # Supprimer le fichier ZIP après extraction
+
+            # **Traiter les fichiers décompressés (PDF et DOCX)**
+            extracted_files = [os.path.join(OUTPUT_FOLDER, f) for f in os.listdir(OUTPUT_FOLDER)]
+            for extracted_file in extracted_files:
+                if extracted_file.lower().endswith('.pdf'):
+                    pdf_to_images(extracted_file, OUTPUT_FOLDER)
+                elif extracted_file.lower().endswith(('.doc', '.docx')):
+                    docx_to_images(extracted_file, OUTPUT_FOLDER)
+
+        # Traiter les fichiers PDF ou DOCX envoyés directement
+        elif file.name.lower().endswith('.pdf'):
+            pdf_to_images(file_path, OUTPUT_FOLDER)
+        elif file.name.lower().endswith(('.doc', '.docx')):
+            docx_to_images(file_path, OUTPUT_FOLDER)
+
 def cv_view(request):
     if request.method == 'POST':
         # Gérer le téléchargement des fichiers par l'utilisateur
@@ -26,20 +61,8 @@ def cv_view(request):
         if not uploaded_files:
             return render(request, 'core/cv.html', {'error': 'Veuillez télécharger au moins un fichier.'})
 
-        # Créer le dossier de sortie s'il n'existe pas
-        os.makedirs(OUTPUT_FOLDER, exist_ok=True)
-
-        # Sauvegarder les fichiers et les convertir en images
-        for file in uploaded_files:
-            file_path = os.path.join(OUTPUT_FOLDER, file.name)
-            with open(file_path, 'wb') as f:
-                for chunk in file.chunks():
-                    f.write(chunk)
-
-            if file.name.lower().endswith('.pdf'):
-                pdf_to_images(file_path, OUTPUT_FOLDER)
-            elif file.name.lower().endswith('.docx'):
-                docx_to_images(file_path, OUTPUT_FOLDER)
+        # Traiter les fichiers envoyés
+        process_uploaded_files(uploaded_files)
 
         # Traitement des images converties
         compétence = defaultdict(list)
@@ -64,11 +87,20 @@ def cv_view(request):
                 elif model_name == 'formation':
                     formation[base_name].extend(processed_texts)
 
+
+          # Fusionner les données pour chaque CV dans une liste
+        all_data = []
+        for image in set(compétence.keys()).union(expérience.keys()).union(formation.keys()):
+            all_data.append({
+                'image': image,
+                'compétence': compétence.get(image, []),
+                'expérience': expérience.get(image, []),
+                'formation': formation.get(image, []),
+            })
+
         # Envoyer les résultats au template
         context = {
-            'compétence': dict(compétence),
-            'expérience': dict(expérience),
-            'formation': dict(formation)
+            'all_data': all_data  # Passer les données structurées pour chaque CV
         }
         return render(request, 'core/cv.html', context)
 
