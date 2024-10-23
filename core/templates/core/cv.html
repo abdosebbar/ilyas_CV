@@ -41,21 +41,32 @@
 </head>
 <body>
     <div class="container">
-        <h2>Déposez vos fichiers CV</h2>
+        <h2>Déposez vos fichiers CV et l'offre d'emploi</h2>
         <p>Vous pouvez soumettre des fichiers PDF, DOC, DOCX ou un fichier ZIP contenant plusieurs CVs.</p>
         <form method="post" enctype="multipart/form-data">
             {% csrf_token %}
+            
+            <!-- Téléchargement des fichiers CV -->
             <label for="files">Sélectionnez vos fichiers :</label>
             <input type="file" id="files" name="files" multiple required accept=".pdf,.doc,.docx,.zip">
-            <button type="submit">Envoyer</button>
+            <br><br>
+
+            <!-- Saisie de l'offre d'emploi -->
+            <label for="offre_emploi">Saisissez l'offre d'emploi :</label>
+            <textarea id="offre_emploi" name="offre_emploi" rows="5" required></textarea>
+            <br><br>
+
+            <!-- Bouton d'envoi -->
+            <button type="submit">Envoyer et comparer</button>
         </form>
 
+        <!-- Affichage des erreurs -->
         {% if error %}
             <p class="error">{{ error }}</p>
         {% endif %}
 
+        <!-- Résultats du traitement -->
         <h2>Résultats des CVs</h2>
-
         <div class="results-section">
             {% for data in all_data %}
                 <h3>Résultats pour le CV : {{ data.image }}</h3>
@@ -96,6 +107,16 @@
                 <hr> <!-- Ligne séparatrice pour chaque CV -->
             {% endfor %}
         </div>
+
+        <!-- Résultats du classement des CVs après comparaison avec l'offre d'emploi -->
+        {% if results %}
+            <h2>Classement des CVs par similarité</h2>
+            <ul>
+                {% for result in results %}
+                    <li>Rang {{ forloop.counter }}: {{ result.image }} - Score de similarité: {{ result.score }}%</li>
+                {% endfor %}
+            </ul>
+        {% endif %}
     </div>
 </body>
 </html>
