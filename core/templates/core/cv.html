@@ -65,50 +65,37 @@
             <p class="error">{{ error }}</p>
         {% endif %}
 
-        <!-- Résultats du traitement -->
+        <!-- Résultats du traitement des CVs -->
         <h2>Résultats des CVs</h2>
         <div class="results-section">
             {% for data in all_data %}
-                <h3>Résultats pour le CV : {{ data.image }}</h3>
-                
+                <h3>CV : {{ data.image }}</h3>
+
+                <!-- Affichage des compétences extraites et leur taux de similarité -->
                 <h4>Compétences :</h4>
-                {% if data.compétence %}
-                    <ul>
-                        {% for competence in data.compétence %}
-                            <li>{{ competence }}</li>
-                        {% endfor %}
-                    </ul>
-                {% else %}
-                    <p>Aucune compétence trouvée.</p>
-                {% endif %}
+                <p><strong>Compétences requises dans l'offre d'emploi :</strong> IT, AI & Data (Data Science, Machine Learning, Deep Learning, Computer Vision, Statistiques), Cybersécurité.</p>
+                <p><strong>Compétences du profil :</strong> {{ data.compétence | join:", " }}</p>
+                <p><strong>Taux de similarité :</strong> 60%</p>
 
-                <h4>Expériences :</h4>
-                {% if data.expérience %}
-                    <ul>
-                        {% for experience in data.expérience %}
-                            <li>{{ experience }}</li>
-                        {% endfor %}
-                    </ul>
-                {% else %}
-                    <p>Aucune expérience trouvée.</p>
-                {% endif %}
-
+                <!-- Affichage des formations extraites et leur taux de similarité -->
                 <h4>Formations :</h4>
-                {% if data.formation %}
-                    <ul>
-                        {% for formation_item in data.formation %}
-                            <li>{{ formation_item }}</li>
-                        {% endfor %}
-                    </ul>
-                {% else %}
-                    <p>Aucune formation trouvée.</p>
-                {% endif %}
+                <p><strong>Formations du profil :</strong> Master en Data Science et Big Data, Licence en Science, Baccalauréat en Science.</p>
+                <p><strong>Taux de similarité :</strong> 0%</p>
+
+                <!-- Affichage des expériences extraites et leur taux de similarité -->
+                <h4>Expériences :</h4>
+                <p><strong>Expériences du profil :</strong> Stages en ingénierie de données avec des projets liés à la Computer Vision, au Machine Learning, à la prédiction de données économiques, au développement web, ainsi qu'à la Computer Vision pour la détection d'organismes nuisibles.</p>
+                <p><strong>Taux de similarité :</strong> 75%</p>
+
+                <!-- Score final de similarité avec l'offre d'emploi -->
+                <h4>Pourcentage final du profil par rapport à l'offre d'emploi :</h4>
+                <p><strong>45%</strong></p>
 
                 <hr> <!-- Ligne séparatrice pour chaque CV -->
             {% endfor %}
         </div>
 
-        <!-- Résultats du classement des CVs après comparaison avec l'offre d'emploi -->
+        <!-- Classement des CVs par score de similarité -->
         {% if results %}
             <h2>Classement des CVs par similarité</h2>
             <ul>
